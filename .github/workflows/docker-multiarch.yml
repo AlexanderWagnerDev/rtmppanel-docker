@@ -39,9 +39,5 @@ jobs:
           platforms: linux/amd64,linux/arm64/v8,linux/riscv64,linux/386,linux/s390x,linux/arm/v7,linux/arm/v6,linux/ppc64le
           push: true
           tags: |
-            alexanderwagnerdev/rtmppanel:latest
-            alexanderwagnerdev/rtmppanel:v0.0.1
-            alexanderwagnerdev/rtmppanel:0.0.1
-            ghcr.io/alexanderwagnerdev/rtmppanel:latest
-            ghcr.io/alexanderwagnerdev/rtmppanel:v0.0.1
-            ghcr.io/alexanderwagnerdev/rtmppanel:0.0.1
+            alexanderwagnerdev/rtmppanel:own
+            ghcr.io/alexanderwagnerdev/rtmppanel:own
