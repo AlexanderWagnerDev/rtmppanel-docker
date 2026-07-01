@@ -2,7 +2,8 @@
 set -e
 
 if [ -z "$SECRET_KEY" ]; then
-  export SECRET_KEY=$(python3 -c "import secrets; print(secrets.token_hex(32))")
+  echo "ERROR: SECRET_KEY must be set to a stable random value. It is used to encrypt stored stream keys." >&2
+  exit 1
 fi
 
 mkdir -p "$(dirname "${PANEL_DB_PATH:-/data/panel.db}")"
