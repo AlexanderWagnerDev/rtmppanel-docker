@@ -13,9 +13,10 @@ services:
       - LRTMP2_APP=live
       - REQUIRE_LOGIN=True
       - USERNAME=admin
-      - PASSWORD=password
-      - SECRET_KEY=change-me-random-secret-key
+      - PASSWORD=change-me-strong-password
       - PANEL_DB_PATH=/data/panel.db
+      # Optional: set this to a stable random value, otherwise entrypoint generates one on every container start
+      # - SECRET_KEY=generate-with-python3-secrets-token-hex-32
       # Optional: set to True only when the panel is served over HTTPS
       # - SESSION_COOKIE_SECURE=False
     volumes:
