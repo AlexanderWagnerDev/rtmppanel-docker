@@ -36,10 +36,15 @@ environment:
   REQUIRE_LOGIN: "True"             # Enable/disable authentication
   USERNAME: "admin"                 # Admin username
   PASSWORD: "supersecret"           # Admin password
-  SECRET_KEY: "change-this-secret"  # Flask session secret
+  SECRET_KEY: "generate-a-stable-random-secret"  # Stable Flask/encryption secret
   LRTMP2_API_URL: "http://librtmp2-server:8080"  # librtmp2-server API URL
   LRTMP2_API_TOKEN: "your_api_token" # librtmp2-server API token
   LRTMP2_DOMAIN: "streaming.example.com" # Public RTMP host/IP
+```
+
+Generate a strong `SECRET_KEY` with:
+```bash
+python3 -c 'import secrets; print(secrets.token_hex(32))'
 ```
 
 3. Build and start the container:
@@ -59,7 +64,7 @@ docker run -d \
   -e REQUIRE_LOGIN=True \
   -e USERNAME=admin \
   -e PASSWORD=supersecret \
-  -e SECRET_KEY=change-this-secret \
+  -e SECRET_KEY=generate-a-stable-random-secret \
   -e LRTMP2_API_URL=http://librtmp2-server:8080 \
   -e LRTMP2_API_TOKEN=your_api_token \
   -e LRTMP2_DOMAIN=localhost \
@@ -87,11 +92,13 @@ docker run -d \
 | `REQUIRE_LOGIN` | Enable authentication (`True`/`False`) | `False` | No |
 | `USERNAME` | Admin username | `admin` | If login enabled |
 | `PASSWORD` | Admin password | - | If login enabled |
-| `SECRET_KEY` | Flask session secret | - | Recommended |
+| `SECRET_KEY` | Stable Flask session/encryption secret for stored stream keys | - | Yes |
 | `PANEL_DB_PATH` | SQLite database path for stored stream keys | `/data/panel.db` | No |
 | `SESSION_COOKIE_SECURE` | Use secure cookies when served over HTTPS | `False` | No |
 | `LANG` | Interface language | `en` | No |
 | `TZ` | Timezone | `UTC` | No |
+
+Important: Keep `SECRET_KEY` stable. The panel uses it to encrypt locally stored stream keys, so changing it can make already stored keys unreadable.
 
 ### Example Configuration
 
@@ -101,7 +108,7 @@ environment:
   REQUIRE_LOGIN: "True"
   USERNAME: "admin"
   PASSWORD: "supersecret"
-  SECRET_KEY: "change-this-secret"
+  SECRET_KEY: "generate-a-stable-random-secret"
   LRTMP2_API_URL: "http://librtmp2-server:8080"
   LRTMP2_API_TOKEN: "mytoken123"
   LRTMP2_DOMAIN: "streaming.example.com"
@@ -118,6 +125,10 @@ environment:
 - Verify `REQUIRE_LOGIN` is set to `True`
 - Check `USERNAME`, `PASSWORD`, and `SECRET_KEY`
 - Clear browser cache and cookies
+
+### Stored stream keys cannot be read after restart
+- Make sure the same `SECRET_KEY` is used after every container restart
+- Keep the `/data` volume mounted so `PANEL_DB_PATH=/data/panel.db` persists
 
 ### View container logs
 ```bash
@@ -181,10 +192,15 @@ environment:
   REQUIRE_LOGIN: "True"             # Authentifizierung aktivieren/deaktivieren
   USERNAME: "admin"                 # Admin-Benutzername
   PASSWORD: "supersecret"           # Admin-Passwort
-  SECRET_KEY: "change-this-secret"  # Flask Session Secret
+  SECRET_KEY: "generate-a-stable-random-secret"  # Stabiles Flask/Verschlüsselungs-Secret
   LRTMP2_API_URL: "http://librtmp2-server:8080"  # librtmp2-server API-URL
   LRTMP2_API_TOKEN: "your_api_token" # librtmp2-server API-Token
   LRTMP2_DOMAIN: "streaming.example.com" # Öffentliche RTMP Domain/IP
+```
+
+Starkes `SECRET_KEY` erzeugen:
+```bash
+python3 -c 'import secrets; print(secrets.token_hex(32))'
 ```
 
 3. Container bauen und starten:
@@ -204,7 +220,7 @@ docker run -d \
   -e REQUIRE_LOGIN=True \
   -e USERNAME=admin \
   -e PASSWORD=supersecret \
-  -e SECRET_KEY=change-this-secret \
+  -e SECRET_KEY=generate-a-stable-random-secret \
   -e LRTMP2_API_URL=http://librtmp2-server:8080 \
   -e LRTMP2_API_TOKEN=your_api_token \
   -e LRTMP2_DOMAIN=localhost \
@@ -232,11 +248,13 @@ docker run -d \
 | `REQUIRE_LOGIN` | Authentifizierung aktivieren (`True`/`False`) | `False` | Nein |
 | `USERNAME` | Admin-Benutzername | `admin` | Bei Login |
 | `PASSWORD` | Admin-Passwort | - | Bei Login |
-| `SECRET_KEY` | Flask Session Secret | - | Empfohlen |
+| `SECRET_KEY` | Stabiles Flask Session-/Verschlüsselungs-Secret für gespeicherte Stream-Keys | - | Ja |
 | `PANEL_DB_PATH` | SQLite-Datenbankpfad für gespeicherte Stream-Keys | `/data/panel.db` | Nein |
 | `SESSION_COOKIE_SECURE` | Sichere Cookies verwenden, wenn HTTPS genutzt wird | `False` | Nein |
 | `LANG` | Sprache der Oberfläche | `en` | Nein |
 | `TZ` | Zeitzone | `UTC` | Nein |
+
+Wichtig: `SECRET_KEY` muss stabil bleiben. Das Panel verschlüsselt lokal gespeicherte Stream-Keys damit. Wenn du es änderst, können bereits gespeicherte Keys unlesbar werden.
 
 ### Beispiel-Konfiguration
 
@@ -246,7 +264,7 @@ environment:
   REQUIRE_LOGIN: "True"
   USERNAME: "admin"
   PASSWORD: "supersecret"
-  SECRET_KEY: "change-this-secret"
+  SECRET_KEY: "generate-a-stable-random-secret"
   LRTMP2_API_URL: "http://librtmp2-server:8080"
   LRTMP2_API_TOKEN: "mytoken123"
   LRTMP2_DOMAIN: "streaming.example.com"
@@ -263,6 +281,10 @@ environment:
 - Überprüfe, ob `REQUIRE_LOGIN` auf `True` gesetzt ist
 - Prüfe `USERNAME`, `PASSWORD` und `SECRET_KEY`
 - Lösche Browser-Cache und Cookies
+
+### Gespeicherte Stream-Keys sind nach Neustart nicht lesbar
+- Stelle sicher, dass nach jedem Container-Neustart dasselbe `SECRET_KEY` verwendet wird
+- Lass das `/data` Volume gemountet, damit `PANEL_DB_PATH=/data/panel.db` bestehen bleibt
 
 ### Container-Logs anzeigen
 ```bash
