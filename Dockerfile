@@ -8,7 +8,7 @@ RUN apk update && \
 WORKDIR /app
 
 ARG PANEL_REPO=https://github.com/OpenRTMP/librtmp2-server-panel.git
-ARG PANEL_REF=main
+ARG PANEL_REF=v0.1.6
 
 RUN git clone --depth 1 --branch "$PANEL_REF" "$PANEL_REPO" . && \
     rm -rf .git
