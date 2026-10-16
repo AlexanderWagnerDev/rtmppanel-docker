@@ -2,7 +2,7 @@ FROM alexanderwagnerdev/alpine:builder AS builder
 
 RUN apk update && \
     apk upgrade && \
-    apk add --no-cache python3 py3-pip python3-dev git gcc musl-dev libffi-dev openssl-dev rust cargo bash tzdata && \
+    apk add --no-cache bash cargo gcc git libffi-dev musl-dev openssl-dev py3-pip python3 python3-dev rust tzdata && \
     rm -rf /var/cache/apk/*
 
 WORKDIR /app
@@ -15,7 +15,9 @@ RUN git clone --depth 1 --branch "$PANEL_REF" "$PANEL_REPO" . && \
 
 RUN python3 -m venv /venv
 
-RUN /bin/sh -c "source /venv/bin/activate && pip install --upgrade pip && pip install --no-cache-dir -r requirements.txt"
+RUN /bin/sh -c "source /venv/bin/activate && \
+    pip install --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt"
 
 ENV PATH="/venv/bin:$PATH"
 
@@ -23,7 +25,7 @@ FROM alexanderwagnerdev/alpine:latest
 
 RUN apk update && \
     apk upgrade && \
-    apk add --no-cache python3 bash libffi openssl libgcc libstdc++ tzdata && \
+    apk add --no-cache bash libffi libgcc libstdc++ openssl python3 tzdata && \
     rm -rf /var/cache/apk/*
 
 WORKDIR /app
