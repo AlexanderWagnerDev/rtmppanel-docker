@@ -37,7 +37,7 @@ environment:
   USERNAME: "admin"                 # Admin username
   PASSWORD: "supersecret"           # Admin password
   SECRET_KEY: "generate-a-stable-random-secret"  # Stable Flask/encryption secret
-  LRTMP2_API_URL: "http://librtmp2-server:8080"  # librtmp2-server API URL
+  LRTMP2_API_URL: "http://host.docker.internal:8090"  # librtmp2-server API URL
   LRTMP2_API_TOKEN: "your_api_token" # librtmp2-server API token
   LRTMP2_DOMAIN: "streaming.example.com" # Public RTMP host/IP
 ```
@@ -65,7 +65,8 @@ docker run -d \
   -e USERNAME=admin \
   -e PASSWORD=supersecret \
   -e SECRET_KEY=generate-a-stable-random-secret \
-  -e LRTMP2_API_URL=http://librtmp2-server:8080 \
+  --add-host host.docker.internal:host-gateway \
+  -e LRTMP2_API_URL=http://host.docker.internal:8090 \
   -e LRTMP2_API_TOKEN=your_api_token \
   -e LRTMP2_DOMAIN=localhost \
   -e LANG=en \
@@ -109,7 +110,7 @@ environment:
   USERNAME: "admin"
   PASSWORD: "supersecret"
   SECRET_KEY: "generate-a-stable-random-secret"
-  LRTMP2_API_URL: "http://librtmp2-server:8080"
+  LRTMP2_API_URL: "http://host.docker.internal:8090"
   LRTMP2_API_TOKEN: "mytoken123"
   LRTMP2_DOMAIN: "streaming.example.com"
 ```
@@ -193,7 +194,7 @@ environment:
   USERNAME: "admin"                 # Admin-Benutzername
   PASSWORD: "supersecret"           # Admin-Passwort
   SECRET_KEY: "generate-a-stable-random-secret"  # Stabiles Flask/Verschlüsselungs-Secret
-  LRTMP2_API_URL: "http://librtmp2-server:8080"  # librtmp2-server API-URL
+  LRTMP2_API_URL: "http://host.docker.internal:8090"  # librtmp2-server API-URL
   LRTMP2_API_TOKEN: "your_api_token" # librtmp2-server API-Token
   LRTMP2_DOMAIN: "streaming.example.com" # Öffentliche RTMP Domain/IP
 ```
@@ -221,7 +222,8 @@ docker run -d \
   -e USERNAME=admin \
   -e PASSWORD=supersecret \
   -e SECRET_KEY=generate-a-stable-random-secret \
-  -e LRTMP2_API_URL=http://librtmp2-server:8080 \
+  --add-host host.docker.internal:host-gateway \
+  -e LRTMP2_API_URL=http://host.docker.internal:8090 \
   -e LRTMP2_API_TOKEN=your_api_token \
   -e LRTMP2_DOMAIN=localhost \
   -e LANG=de \
@@ -265,7 +267,7 @@ environment:
   USERNAME: "admin"
   PASSWORD: "supersecret"
   SECRET_KEY: "generate-a-stable-random-secret"
-  LRTMP2_API_URL: "http://librtmp2-server:8080"
+  LRTMP2_API_URL: "http://host.docker.internal:8090"
   LRTMP2_API_TOKEN: "mytoken123"
   LRTMP2_DOMAIN: "streaming.example.com"
 ```
@@ -305,3 +307,7 @@ Für Fragen, Probleme oder Feature-Requests:
 
 - [librtmp2-server-panel](https://github.com/OpenRTMP/librtmp2-server-panel) - Der Upstream-Panel-Sourcecode, der beim Docker-Build geklont wird
 - [librtmp2-server](https://github.com/OpenRTMP/librtmp2-server) - Der RTMP-Server, den dieses Panel verwaltet
+
+The provided Compose file connects to the RTMP server published on host port 8090 through `host.docker.internal` (Docker Engine 20.10+). Set `LRTMP2_API_TOKEN` to the token from `docker logs rtmp-server`, set a stable random `SECRET_KEY`, and change the panel password before starting. For a backend on another host, change `LRTMP2_API_URL`.
+
+Die Compose-Datei verbindet sich über `host.docker.internal` mit dem RTMP-Server auf Host-Port 8090 (Docker Engine 20.10+). API-Token aus `docker logs rtmp-server` eintragen, einen festen zufälligen `SECRET_KEY` setzen und das Panel-Passwort ändern. Bei einem anderen Backend-Host `LRTMP2_API_URL` anpassen.
