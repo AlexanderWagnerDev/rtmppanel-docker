@@ -6,7 +6,7 @@ services:
     environment:
       - LANG=en
       - TZ=UTC
-      - LRTMP2_API_URL=http://host.docker.internal:8090
+      - LRTMP2_API_URL=http://librtmp2-server:8080
       - LRTMP2_API_TOKEN=your-api-token
       - LRTMP2_DOMAIN=your-rtmp-domain-or-ip
       - LRTMP2_RTMP_PORT=1935
@@ -20,8 +20,6 @@ services:
       # - SESSION_COOKIE_SECURE=False
     volumes:
       - rtmppanel-data:/data
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
     ports:
       - "8000:8000/tcp"
 
