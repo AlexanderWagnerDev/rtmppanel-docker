@@ -40,8 +40,8 @@ jobs:
           push: true
           tags: |
             alexanderwagnerdev/rtmppanel:latest
-            alexanderwagnerdev/rtmppanel:v0.0.1
-            alexanderwagnerdev/rtmppanel:0.0.1
+            alexanderwagnerdev/rtmppanel:v0.1.0
+            alexanderwagnerdev/rtmppanel:0.1.0
             ghcr.io/alexanderwagnerdev/rtmppanel:latest
-            ghcr.io/alexanderwagnerdev/rtmppanel:v0.0.1
-            ghcr.io/alexanderwagnerdev/rtmppanel:0.0.1
+            ghcr.io/alexanderwagnerdev/rtmppanel:v0.1.0
+            ghcr.io/alexanderwagnerdev/rtmppanel:0.1.0
