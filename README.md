@@ -25,12 +25,13 @@ git clone --branch beta https://github.com/AlexanderWagnerDev/rtmppanel-docker.g
 cd rtmppanel-docker
 cp .env.example .env
 # Edit .env: API token, stable SECRET_KEY, password and public domain.
-# Generate API token and SECRET_KEY separately: openssl rand -hex 32
+# Reuse the running backend's API token; do not generate a panel-only token.
+# Generate SECRET_KEY for a NEW panel only: openssl rand -hex 32
 docker compose config --quiet
 docker compose up -d
 ```
 
-Panel: `http://localhost:8001`. Set `LRTMP2_API_URL` to your running backend.
+Panel: `http://localhost:8001`. Set `LRTMP2_API_URL` to your running backend as reached from the container, and `LRTMP2_STATS_URL` to its browser-reachable base URL (including any custom port).
 
 ## 📖 Usage
 
@@ -53,7 +54,7 @@ Only the panel port is published by this standalone Compose file; backend ports 
 
 ## ⚙️ Configuration and storage
 
-See [configuration](docs/configuration.md) for all environment settings, networking, storage and troubleshooting, and [migration](docs/migration.md) for the nginx transition. Copy `.env.example`, generate credentials, and keep `.env` and volume backups private. The panel `SECRET_KEY` must stay unchanged across updates.
+See [configuration](docs/configuration.md) for all environment settings, networking, storage and troubleshooting, and [migration](docs/migration.md) for the nginx transition. Copy `.env.example`, reuse the backend token, configure the panel credentials, and keep `.env` and volume backups private. The panel `SECRET_KEY` must stay unchanged across updates.
 
 ## 🔄 Updates
 
@@ -85,9 +86,9 @@ Branch **beta**: OpenRTMP-Server mit RTMPPanel, persistenten Daten und konfiguri
 
 ## 🚀 Schnellstart
 
-Den oben gezeigten Branch klonen, `.env.example` nach `.env` kopieren und API-Token, festen `SECRET_KEY`, Passwort und öffentliche Domain eintragen. API-Token und Secret mit jeweils einem eigenen Aufruf von `openssl rand -hex 32` erzeugen. Danach `docker compose config --quiet` und `docker compose up -d` ausführen.
+Den oben gezeigten Branch klonen, `.env.example` nach `.env` kopieren und API-Token, festen `SECRET_KEY`, Passwort und öffentliche Domain eintragen. Den vorhandenen Backend-API-Token übernehmen. Nur für ein neues Panel den `SECRET_KEY` mit `openssl rand -hex 32` erzeugen; bei bestehenden Panel-Daten dessen bisherigen Secret behalten. Danach `docker compose config --quiet` und `docker compose up -d` ausführen.
 
-Das einzelne Panel benötigt einen laufenden OpenRTMP-Server. Dessen erreichbare API-URL und vorhandenen Token in `.env` eintragen.
+Das einzelne Panel benötigt einen laufenden OpenRTMP-Server. Dessen vom Container erreichbare `LRTMP2_API_URL` und vorhandenen Token in `.env` eintragen; für Browser-Statistiklinks eine öffentlich erreichbare `LRTMP2_STATS_URL` einschließlich eigenem Port setzen.
 
 ## 📖 Verwendung und Konfiguration
 
