@@ -15,3 +15,24 @@ jobs:
           SECRET_KEY: bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
           PANEL_PASSWORD: validation-only-password
         run: docker compose config --quiet
+      - name: Read configured panel revision
+        id: panel
+        run: |
+          python3 - <<'PYCODE'
+          import os
+          from pathlib import Path
+          ref = next(line.split('=', 1)[1] for line in Path('Dockerfile').read_text().splitlines() if line.startswith('ARG PANEL_REF='))
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as output:
+              output.write(f'ref={ref}\n')
+          PYCODE
+      - name: Check panel startup configuration from the matching upstream channel
+        uses: actions/checkout@v7
+        with:
+          repository: OpenRTMP/librtmp2-server-panel
+          ref: ${{ steps.panel.outputs.ref }}
+          path: .upstream
+          persist-credentials: false
+      - name: Test rendered deployment against upstream startup guards
+        env:
+          PANEL_SOURCE_DIR: ${{ github.workspace }}/.upstream
+        run: python3 -m unittest discover -s tests -v
