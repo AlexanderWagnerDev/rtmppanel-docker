@@ -9,17 +9,21 @@ Copy `.env.example` to `.env`, fill in the empty credentials, then run `docker c
 | `PANEL_PASSWORD` | Panel admin password / Admin-Passwort | required |
 | `PANEL_USERNAME` | Panel admin username / Benutzername | admin |
 | `REQUIRE_LOGIN` | Panel authentication / Anmeldung | True |
+| `ALLOW_INSECURE_NO_LOGIN` | Required acknowledgement when disabling login / Freigabe ohne Anmeldung | 0 |
+| `GUNICORN_WORKERS` | Worker processes; multiple workers require shared storage / Worker-Anzahl | 1 |
+| `RATELIMIT_STORAGE_URI` | Session/rate-limit backend; use shared Redis for multiple workers | memory:// |
+| `LRTMP2_API_URL` | Backend URL reached from the container, including custom port | http://host.docker.internal:8090 |
+| `LRTMP2_STATS_URL` | Backend URL reached from the viewer's browser, including custom port | http://localhost:8090 |
 | `LRTMP2_DOMAIN` | Public domain/IP used in stream URLs / Öffentliche Domain/IP | localhost |
 | `RTMP_PORT` | Published RTMP port / Host-Port RTMP | 1935 |
-| `RTMP_API_PORT` | Published API port; internal API stays on 8080 / Host-Port API | 8090 |
 | `RTMPPANEL_PORT` | Published panel port; internal panel stays on 8000 / Host-Port Panel | 8001 |
 | `PANEL_LANG` | Interface language / Sprache | en |
 | `TZ` | Container timezone / Zeitzone | UTC |
 | `SESSION_COOKIE_SECURE` | Set True behind HTTPS / Bei HTTPS aktivieren | False |
 
-Generate the API token and encryption secret separately using `openssl rand -hex 32`. Choose a strong panel password. `.env` is local configuration and must not be committed. `LRTMP2_API_TOKEN` seeds a **new** server database; an existing database keeps its stored token. Use that token for the panel instead of generating another one. Keep `SECRET_KEY` unchanged when reusing the panel database, or stored stream keys cannot be decrypted.
+Reuse the API token from the already-running backend. Generate only the encryption secret for a new panel using `openssl rand -hex 32`. Generate a new API token only when initializing a new backend and configure that same value on both sides. Choose a strong panel password. `.env` is local configuration and must not be committed. `LRTMP2_API_TOKEN` seeds a **new** server database; an existing database keeps its stored token. Use that token for the panel instead of generating another one. Keep `SECRET_KEY` unchanged when reusing the panel database, or stored stream keys cannot be decrypted.
 
-API-Token und Secret getrennt mit `openssl rand -hex 32` erzeugen. Ein starkes Passwort wählen. `.env` bleibt lokal. Eine bestehende Server-Datenbank behält ihren Token; diesen auch im Panel verwenden. Den `SECRET_KEY` bei bestehender Panel-Datenbank unverändert lassen, damit gespeicherte Stream-Keys entschlüsselt werden können.
+Den vorhandenen Backend-API-Token übernehmen. Nur für ein neues Panel den Secret mit `openssl rand -hex 32` erzeugen; einen neuen API-Token nur bei der Initialisierung eines neuen Backends auf beiden Seiten identisch setzen. Ein starkes Passwort wählen. `.env` bleibt lokal. Eine bestehende Server-Datenbank behält ihren Token; diesen auch im Panel verwenden. Den `SECRET_KEY` bei bestehender Panel-Datenbank unverändert lassen, damit gespeicherte Stream-Keys entschlüsselt werden können.
 
 ## Storage and networking / Daten und Netzwerk
 
@@ -53,3 +57,11 @@ docker build -t alexanderwagnerdev/rtmppanel:latest .
 ```
 
 Build arguments can override the repository/revision for local testing. The multi-platform publishing workflow remains manually dispatched; PR validation does not publish images. / Der Veröffentlichungs-Workflow bleibt manuell; PR-Prüfungen veröffentlichen keine Images.
+
+## Standalone URLs and startup / URLs und Startkonfiguration
+
+This standalone deployment does not publish or configure a backend API port. Set the full `LRTMP2_API_URL` for the existing server, for example `http://host.docker.internal:9190`. Set `LRTMP2_STATS_URL` independently, for example `https://stream.example.com` or `http://stream.example.com:9190`. Copied stats links use the latter; `host.docker.internal` is intended for container access and generally cannot be resolved by a remote viewer's browser. Replace the localhost example for remote viewers. RTMP_API_PORT is intentionally absent from this standalone template.
+
+The default single Gunicorn worker works with `RATELIMIT_STORAGE_URI=memory://`. More workers require a shared session/rate-limit backend such as `redis://redis:6379/0` that you deploy separately; upstream rejects multiple workers with memory storage. Setting `REQUIRE_LOGIN=False` also requires `ALLOW_INSECURE_NO_LOGIN=1`; keep the acknowledgement at 0 unless deliberately disabling authentication. A nonempty panel password is still required by this Compose template.
+
+Für einen eigenen Backend-Port die vollständige `LRTMP2_API_URL` ändern; eine separate Variable `RTMP_API_PORT` ist beim einzelnen Panel nicht vorgesehen. `LRTMP2_STATS_URL` muss für den Browser erreichbar sein und erhält die öffentliche Domain sowie gegebenenfalls den eigenen Port. Ein Worker funktioniert mit `memory://`; mehrere Worker benötigen ein gemeinsam genutztes Session-/Rate-Limit-Backend wie Redis. Zum bewussten Abschalten der Anmeldung zusätzlich zu `REQUIRE_LOGIN=False` auch `ALLOW_INSECURE_NO_LOGIN=1` setzen. Standardmäßig bleibt die Anmeldung aktiv.
