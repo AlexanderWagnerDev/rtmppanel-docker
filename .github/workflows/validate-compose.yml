@@ -8,7 +8,7 @@ jobs:
   validate:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
       - name: Validate Compose configuration
         env:
           LRTMP2_API_TOKEN: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
@@ -26,7 +26,7 @@ jobs:
               output.write(f'ref={ref}\n')
           PY
       - name: Check out pinned upstream startup configuration
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           repository: OpenRTMP/librtmp2-server-panel
           ref: ${{ steps.panel.outputs.ref }}
